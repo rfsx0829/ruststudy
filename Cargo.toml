@@ -5,3 +5,5 @@ authors = ["rfsx0829 <rfsx0829@163.com>"]
 edition = "2018"
 
 [dependencies]
+
+redis = "0.10.0"
