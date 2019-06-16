@@ -1,14 +1,22 @@
-extern crate redis;
-use redis::Commands;
+extern crate actix_web;
+use actix_web::{server, App, HttpRequest, Responder};
 
-fn main() {
-    let res = redis_test().expect("redis_test failed.");
-    println!("res = {}", res);
+fn greet(req: &HttpRequest) -> impl Responder {
+    let to = req.match_info().get("name").unwrap_or("World");
+    format!("Hello {}!", to)
 }
 
-fn redis_test() -> redis::RedisResult<i32> {
-    let cli = redis::Client::open("redis://:password@192.168.99.105:31150")?;
-    let con = cli.get_connection()?;
-    let _ = con.set("wow", 234)?;
-    con.get("wow")
+fn handler(req: &HttpRequest) -> impl Responder {
+    format!("Emm")
+}
+
+fn main() {
+    server::new(|| {
+        App::new()
+            .resource("/", |r| r.f(handler))
+            .resource("/{name}", |r| r.f(greet))
+    })
+    .bind("127.0.0.1:8000")
+    .expect("Can not bind to port 8000")
+    .run();
 }
